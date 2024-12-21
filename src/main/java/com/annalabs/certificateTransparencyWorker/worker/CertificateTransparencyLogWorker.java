@@ -25,7 +25,6 @@ public class CertificateTransparencyLogWorker {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        kafkaTemplate.send("subdomains", message);
         if (!Objects.isNull(subdomains)) {
             subdomains.forEach(subdomain -> kafkaTemplate.send("subdomains", subdomain));
         }
