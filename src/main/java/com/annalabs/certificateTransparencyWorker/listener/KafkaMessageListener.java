@@ -10,7 +10,7 @@ public class KafkaMessageListener {
     @Autowired
     CertificateTransparencyLogWorker worker;
 
-    @KafkaListener(topics = "domains", groupId = "domains-group", containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = {"${kafka.topics.domain}"}, groupId = "${kafka.groups.certsh}", containerFactory = "kafkaListenerContainerFactory")
     public void listen(String message) {
         worker.work(message);
     }

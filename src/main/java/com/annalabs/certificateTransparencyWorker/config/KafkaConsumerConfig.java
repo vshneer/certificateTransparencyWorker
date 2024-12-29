@@ -19,16 +19,19 @@ public class KafkaConsumerConfig {
 
     private final String bootstrapServers;
 
-    public KafkaConsumerConfig(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+    public KafkaConsumerConfig(@Value("${kafka.bootstrap-servers}") String bootstrapServers) {
         this.bootstrapServers = bootstrapServers;
     }
+
+    @Value("${kafka.groups.certsh}")
+    private String group;
 
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "domains-group");
+        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, group);
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(configProps);

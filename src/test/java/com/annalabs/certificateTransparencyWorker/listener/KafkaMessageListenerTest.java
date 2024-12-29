@@ -3,6 +3,7 @@ package com.annalabs.certificateTransparencyWorker.listener;
 import com.annalabs.certificateTransparencyWorker.worker.CertificateTransparencyLogWorker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -20,6 +21,11 @@ public class KafkaMessageListenerTest {
     @Autowired
     private KafkaMessageListener listener;
 
+    @Value("${kafka.topics.domain}")
+    private String topic;
+
+
+
     @Test
     public void listen() throws InterruptedException {
 
@@ -28,7 +34,7 @@ public class KafkaMessageListenerTest {
 
         // Send a test message to Kafka
         String testMessage = "Hello, Kafka!";
-        kafkaTemplate.send("domains", testMessage);
+        kafkaTemplate.send(topic, testMessage);
 
         // Wait for the listener to process the message
         Thread.sleep(5000); // Replace with a better synchronization method in production

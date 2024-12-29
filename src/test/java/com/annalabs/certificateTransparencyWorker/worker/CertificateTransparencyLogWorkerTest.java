@@ -12,19 +12,20 @@ import org.testcontainers.utility.DockerImageName;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class CertificateTransparencyLogWorkerTest {
 
     public static final String TEST_D = "fnx.co.il";
-    private static final String TOPIC = "subdomains";
+
 
     private static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"));
 
     static {
         kafkaContainer.start();
     }
+
 
     private final CountDownLatch latch = new CountDownLatch(1);
     @Autowired
@@ -33,7 +34,7 @@ class CertificateTransparencyLogWorkerTest {
 
     @DynamicPropertySource
     static void registerKafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
+        registry.add("kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
     }
 
     @Test
@@ -45,7 +46,7 @@ class CertificateTransparencyLogWorkerTest {
         assertTrue(messageConsumed, "Message was not consumed in time");
     }
 
-    @KafkaListener(topics = TOPIC, groupId = "test-group")
+    @KafkaListener(topics = {"${kafka.topics.subdomain}"}, groupId = "${kafka.groups.certsh}")
     public void listen(String message) {
         this.receivedMessage = message;
         latch.countDown();
